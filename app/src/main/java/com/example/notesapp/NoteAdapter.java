@@ -1,29 +1,35 @@
 package com.example.notesapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.snackbar.Snackbar;
+import com.example.notesapp.db.Note;
 
+import java.util.Collections;
 import java.util.List;
 
-public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
+import static com.example.notesapp.EditActivity.EXTRA_MESSAGE_ID;
 
-    private List<Note> notes;
+public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> implements Observer<List<Note>> {
+
+    private List<Note> notes = Collections.emptyList();
     private Context context;
 
-    public NoteAdapter(Context context, List<Note> notes) {
+    public NoteAdapter(Context context) {
         this.context = context;
-        this.notes = notes;
     }
 
-    public void setNotes(List<Note> notes) {
+    @Override
+    public void onChanged(List<Note> notes) {
+        System.out.println("ON CHANGE");
         this.notes = notes;
         notifyDataSetChanged();
     }
@@ -59,8 +65,9 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
             txtName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Snackbar.make(view, note.getName(), Snackbar.LENGTH_LONG).show();
-                    txtName.animate();
+                    Intent intent = new Intent(context, EditActivity.class);
+                    intent.putExtra(EXTRA_MESSAGE_ID, note.getId());
+                    context.startActivity(intent);
                 }
             });
         }

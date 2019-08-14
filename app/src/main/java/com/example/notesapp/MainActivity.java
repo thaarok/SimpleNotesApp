@@ -5,20 +5,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notesapp.db.Note;
+import com.example.notesapp.db.NoteRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
+    private NoteRepository repository;
+    private NoteAdapter noteAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,19 +34,28 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                repository.insert(new Note(0, "new", "new text"));
+                Snackbar.make(view, "Inserted", Snackbar.LENGTH_SHORT).show();
+                refreshList();
             }
         });
 
-        List<Note> notes = new ArrayList<>();
-        notes.add(new Note("nazev1", "text1"));
-        notes.add(new Note("nazev2", "text2"));
-        notes.add(new Note("nazev3", "text3"));
+        repository = ViewModelProviders.of(this).get(NoteRepository.class);
+        noteAdapter = new NoteAdapter(this);
 
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new NoteAdapter(this, notes));
+        recyclerView.setAdapter(noteAdapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshList();
+    }
+
+    private void refreshList() {
+        repository.getAll().observe(this, noteAdapter);
     }
 
     @Override
@@ -53,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) { // action bar (three dots)
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) { // action bar (three dots)
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
