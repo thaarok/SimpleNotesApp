@@ -1,5 +1,6 @@
 package com.example.notesapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,8 @@ import com.example.notesapp.db.Note;
 import com.example.notesapp.db.NoteRepository;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+
+import static com.example.notesapp.EditActivity.EXTRA_MESSAGE_ID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,9 +37,16 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                repository.insert(new Note(0, "new", "new text"));
-                Snackbar.make(view, "Inserted", Snackbar.LENGTH_SHORT).show();
+                Note note = new Note(0, "new", "new text");
+                repository.insert(note);
                 refreshList();
+
+                /*
+                // has to wait for insert finish
+                Intent intent = new Intent(MainActivity.this, EditActivity.class);
+                intent.putExtra(EXTRA_MESSAGE_ID, note.getId());
+                startActivity(intent);
+                */
             }
         });
 
@@ -70,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        Snackbar.make(recyclerView, "Replace with your own action", Snackbar.LENGTH_LONG).show();
 
         if (id == R.id.action_settings) {
             return true;

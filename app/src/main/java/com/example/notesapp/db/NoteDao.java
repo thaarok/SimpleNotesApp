@@ -13,7 +13,7 @@ import java.util.List;
 public interface NoteDao {
 
     @Insert
-    void insert(Note note);
+    long insert(Note note);
 
     @Update
     void update(Note note);
@@ -21,10 +21,10 @@ public interface NoteDao {
     @Delete
     void delete(Note note);
 
-    @Query("SELECT * FROM Note WHERE id = :id")
-    LiveData<Note> getById(int id);
+    @Query("SELECT * FROM Note WHERE id = :id AND deleted = 0")
+    LiveData<Note> getById(long id);
 
-    @Query("SELECT * FROM Note ORDER BY changed DESC")
+    @Query("SELECT * FROM Note WHERE deleted = 0 ORDER BY changed DESC")
     LiveData<List<Note>> getAll();
 
 }

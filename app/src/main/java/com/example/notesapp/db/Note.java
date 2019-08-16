@@ -1,14 +1,13 @@
 package com.example.notesapp.db;
 
 import androidx.room.Entity;
-import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity
 public class Note {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
 
     private String name;
 
@@ -16,20 +15,19 @@ public class Note {
 
     private int changed;
 
-    @Ignore
-    public Note() {}
+    private boolean deleted;
 
-    public Note(int id, String name, String text) {
+    public Note(long id, String name, String text) {
         this.id = id;
         this.name = name;
         this.text = text;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -55,6 +53,14 @@ public class Note {
 
     public void setChanged(int changed) {
         this.changed = changed;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
 }

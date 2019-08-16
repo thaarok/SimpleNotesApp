@@ -1,11 +1,14 @@
 package com.example.notesapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 
 import com.example.notesapp.db.Note;
 import com.example.notesapp.db.NoteRepository;
@@ -19,6 +22,7 @@ public class EditActivity extends AppCompatActivity {
     private Note openedNote;
     private EditText editName;
     private EditText editText;
+    private ImageButton removeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,20 +30,32 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
 
         Intent intent = getIntent();
-        int id = intent.getIntExtra(EXTRA_MESSAGE_ID, 0);
+        long id = intent.getLongExtra(EXTRA_MESSAGE_ID, 0);
         if (id == 0) throw new IllegalArgumentException();
 
         repository = new NoteRepository(getApplication());
 
         editName = findViewById(R.id.editName);
         editText = findViewById(R.id.editText);
+        removeButton = findViewById(R.id.removeButton);
 
         repository.getById(id).observe(this, new Observer<Note>() {
             @Override
             public void onChanged(Note note) {
                 openedNote = note;
+                if (openedNote == null) return;
                 editName.setText(openedNote.getName());
                 editText.setText(openedNote.getText());
+            }
+        });
+
+
+
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openedNote.setDeleted(true);
+                finish();
             }
         });
     }
