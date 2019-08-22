@@ -3,34 +3,21 @@ package com.example.notesapp.db;
 import android.app.Application;
 import android.os.AsyncTask;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.room.Room;
-import androidx.room.migration.Migration;
-import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.List;
 
-public class NoteRepository extends AndroidViewModel {
+public class NoteViewModel extends AndroidViewModel {
 
     private Database database;
 
-    private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            database.execSQL("ALTER TABLE Note ADD COLUMN deleted INTEGER NOT NULL DEFAULT 0");
-        }
-    };
-
-    public NoteRepository(Application application) {
+    public NoteViewModel(Application application) {
         super(application);
-        database = Room.databaseBuilder(application.getApplicationContext(), Database.class, "DB_NOTES")
-                .addMigrations(MIGRATION_1_2)
-                .build();
+        database = Database.getInstance(application.getApplicationContext());
     }
 
-    public void insert(final Note note) {
+    public void insertAsync(final Note note) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -41,7 +28,7 @@ public class NoteRepository extends AndroidViewModel {
         }.execute();
     }
 
-    public void update(final Note note) {
+    public void updateAsync(final Note note) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -52,7 +39,7 @@ public class NoteRepository extends AndroidViewModel {
         }.execute();
     }
 
-    public void delete(final Note note) {
+    public void deleteAsync(final Note note) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {

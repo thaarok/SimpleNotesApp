@@ -1,7 +1,6 @@
 package com.example.notesapp;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 
 import android.content.Intent;
@@ -11,14 +10,13 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.example.notesapp.db.Note;
-import com.example.notesapp.db.NoteRepository;
-import com.google.android.material.snackbar.Snackbar;
+import com.example.notesapp.db.NoteViewModel;
 
 public class EditActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE_ID = "com.example.notesapp.noteId";
 
-    private NoteRepository repository;
+    private NoteViewModel repository;
     private Note openedNote;
     private EditText editName;
     private EditText editText;
@@ -33,7 +31,7 @@ public class EditActivity extends AppCompatActivity {
         long id = intent.getLongExtra(EXTRA_MESSAGE_ID, 0);
         if (id == 0) throw new IllegalArgumentException();
 
-        repository = new NoteRepository(getApplication());
+        repository = new NoteViewModel(getApplication());
 
         editName = findViewById(R.id.editName);
         editText = findViewById(R.id.editText);
@@ -65,7 +63,7 @@ public class EditActivity extends AppCompatActivity {
         super.onPause();
         openedNote.setName(editName.getText().toString());
         openedNote.setText(editText.getText().toString());
-        repository.update(openedNote);
+        repository.updateAsync(openedNote);
     }
 
 }
