@@ -51,11 +51,11 @@ public class NoteViewModel extends AndroidViewModel {
     }
 
     public LiveData<Note> getById(long id) {
-        return database.getNoteDao().getById(id);
+        return database.getNoteDao().getByIdAsync(id);
     }
 
     public LiveData<List<Note>> getAll() {
-        return database.getNoteDao().getAll();
+        return database.getNoteDao().getAllAsync();
     }
 
 }

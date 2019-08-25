@@ -22,9 +22,15 @@ public interface NoteDao {
     void delete(Note note);
 
     @Query("SELECT * FROM Note WHERE id = :id AND deleted = 0")
-    LiveData<Note> getById(long id);
+    Note getById(long id);
 
     @Query("SELECT * FROM Note WHERE deleted = 0 ORDER BY changed DESC")
-    LiveData<List<Note>> getAll();
+    List<Note> getAll();
+
+    @Query("SELECT * FROM Note WHERE id = :id AND deleted = 0")
+    LiveData<Note> getByIdAsync(long id);
+
+    @Query("SELECT * FROM Note WHERE deleted = 0 ORDER BY changed DESC")
+    LiveData<List<Note>> getAllAsync();
 
 }
