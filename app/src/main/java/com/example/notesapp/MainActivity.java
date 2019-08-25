@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Note note = new Note(0, "new", "new text");
+                Note note = new Note(0, null, "new", "new text");
                 repository.insertAsync(note);
                 refreshList();
 

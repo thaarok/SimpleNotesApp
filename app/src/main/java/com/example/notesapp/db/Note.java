@@ -3,22 +3,29 @@ package com.example.notesapp.db;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.Date;
+
 @Entity
 public class Note {
 
     @PrimaryKey(autoGenerate = true)
     private long id;
 
+    private long externalId;
+
+    private Date externalChanged; // from last sync, not update locally
+
     private String name;
 
     private String text;
 
-    private int changed;
+    private Date changedLocally;
 
-    private boolean deleted;
+    private boolean deletedLocally;
 
-    public Note(long id, String name, String text) {
-        this.id = id;
+    public Note(long externalId, Date externalChanged, String name, String text) {
+        this.externalId = externalId;
+        this.externalChanged = externalChanged;
         this.name = name;
         this.text = text;
     }
@@ -29,6 +36,22 @@ public class Note {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(long externalId) {
+        this.externalId = externalId;
+    }
+
+    public Date getExternalChanged() {
+        return externalChanged;
+    }
+
+    public void setExternalChanged(Date externalChanged) {
+        this.externalChanged = externalChanged;
     }
 
     public String getName() {
@@ -47,20 +70,20 @@ public class Note {
         this.text = text;
     }
 
-    public int getChanged() {
-        return changed;
+    public Date getChangedLocally() {
+        return changedLocally;
     }
 
-    public void setChanged(int changed) {
-        this.changed = changed;
+    public void setChangedLocally(Date changedLocally) {
+        this.changedLocally = changedLocally;
     }
 
-    public boolean isDeleted() {
-        return deleted;
+    public boolean isDeletedLocally() {
+        return deletedLocally;
     }
 
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
+    public void setDeletedLocally(boolean deletedLocally) {
+        this.deletedLocally = deletedLocally;
     }
 
 }

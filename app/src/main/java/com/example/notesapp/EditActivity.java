@@ -52,7 +52,7 @@ public class EditActivity extends AppCompatActivity {
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openedNote.setDeleted(true);
+                openedNote.setDeletedLocally(true);
                 finish();
             }
         });

@@ -7,6 +7,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import java.util.Date;
 import java.util.List;
 
 @Dao
@@ -21,16 +22,19 @@ public interface NoteDao {
     @Delete
     void delete(Note note);
 
-    @Query("SELECT * FROM Note WHERE id = :id AND deleted = 0")
-    Note getById(long id);
+    @Query("SELECT MAX(externalChanged) FROM Note")
+    Date getMaximalExternalChanged();
 
-    @Query("SELECT * FROM Note WHERE deleted = 0 ORDER BY changed DESC")
+    @Query("SELECT * FROM Note WHERE externalId = :externalId")
+    Note getByExternalId(long externalId);
+
+    @Query("SELECT * FROM Note WHERE deletedLocally = 0 ORDER BY externalChanged DESC")
     List<Note> getAll();
 
-    @Query("SELECT * FROM Note WHERE id = :id AND deleted = 0")
+    @Query("SELECT * FROM Note WHERE id = :id AND deletedLocally = 0")
     LiveData<Note> getByIdAsync(long id);
 
-    @Query("SELECT * FROM Note WHERE deleted = 0 ORDER BY changed DESC")
+    @Query("SELECT * FROM Note WHERE deletedLocally = 0 ORDER BY externalChanged DESC")
     LiveData<List<Note>> getAllAsync();
 
 }
