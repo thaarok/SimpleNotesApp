@@ -28,6 +28,12 @@ public interface NoteDao {
     @Query("SELECT * FROM Note WHERE externalId = :externalId")
     Note getByExternalId(long externalId);
 
+    @Query("SELECT * FROM Note WHERE changedLocally != 0")
+    List<Note> getChangedLocally();
+
+    @Query("SELECT * FROM Note WHERE deletedLocally != 0")
+    List<Note> getDeletedLocally();
+
     @Query("SELECT * FROM Note WHERE deletedLocally = 0 ORDER BY externalChanged DESC")
     List<Note> getAll();
 

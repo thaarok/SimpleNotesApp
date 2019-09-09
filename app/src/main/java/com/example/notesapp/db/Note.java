@@ -3,6 +3,9 @@ package com.example.notesapp.db;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Date;
 
 @Entity
@@ -84,6 +87,15 @@ public class Note {
 
     public void setDeletedLocally(boolean deletedLocally) {
         this.deletedLocally = deletedLocally;
+    }
+
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = new JSONObject();
+        json.put("id", externalId);
+        json.put("name", name);
+        json.put("text", text);
+        json.put("changed", Database.formatter.format(changedLocally));
+        return json;
     }
 
 }

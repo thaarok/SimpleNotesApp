@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import java.util.Date;
 import java.util.List;
 
 public class NoteViewModel extends AndroidViewModel {
@@ -29,22 +30,12 @@ public class NoteViewModel extends AndroidViewModel {
     }
 
     public void updateAsync(final Note note) {
+        note.setChangedLocally(new Date());
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 database.getNoteDao().update(note);
                 System.out.println("UPDATED");
-                return null;
-            }
-        }.execute();
-    }
-
-    public void deleteAsync(final Note note) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                database.getNoteDao().delete(note);
-                System.out.println("DELETED");
                 return null;
             }
         }.execute();

@@ -10,11 +10,15 @@ import androidx.room.TypeConverters;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 @androidx.room.Database(entities = {Note.class}, version = 2, exportSchema = false)
 @TypeConverters(value = {Database.class})
 public abstract class Database extends RoomDatabase {
+
+    public static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
     public abstract NoteDao getNoteDao();
 
