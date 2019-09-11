@@ -3,6 +3,7 @@ package com.example.notesapp;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +12,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,11 +21,12 @@ import com.example.notesapp.db.Note;
 import com.example.notesapp.db.NoteViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private NoteViewModel repository;
-    private NoteAdapter noteAdapter;
     private Account account;
 
     @Override
@@ -37,25 +40,25 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Note note = new Note(0, null, "new", "new text");
+                Note note = new Note("new", "new text");
                 repository.insertAsync(note);
-                refreshList();
-
-                /*
-                // has to wait for insert finish
-                Intent intent = new Intent(MainActivity.this, EditActivity.class);
-                intent.putExtra(EXTRA_MESSAGE_ID, note.getId());
-                startActivity(intent);
-                */
             }
         });
 
         repository = ViewModelProviders.of(this).get(NoteViewModel.class);
-        noteAdapter = new NoteAdapter(this);
 
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(noteAdapter);
+
+        final Context context = this;
+
+        repository.getAll().observe(this, new Observer<List<Note>>() {
+            @Override
+            public void onChanged(List<Note> notes) {
+                System.out.println("NOTES OBSERVED");
+                recyclerView.setAdapter(new NoteAdapter(context, notes));
+            }
+        });
 
         account = createSyncAccount();
     }
@@ -63,11 +66,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshList();
-    }
-
-    private void refreshList() {
-        repository.getAll().observe(this, noteAdapter);
     }
 
     @Override

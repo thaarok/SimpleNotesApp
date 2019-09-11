@@ -34,13 +34,10 @@ public interface NoteDao {
     @Query("SELECT * FROM Note WHERE deletedLocally != 0")
     List<Note> getDeletedLocally();
 
-    @Query("SELECT * FROM Note WHERE deletedLocally = 0 ORDER BY externalChanged DESC")
-    List<Note> getAll();
-
     @Query("SELECT * FROM Note WHERE id = :id AND deletedLocally = 0")
     LiveData<Note> getByIdAsync(long id);
 
     @Query("SELECT * FROM Note WHERE deletedLocally = 0 ORDER BY externalChanged DESC")
-    LiveData<List<Note>> getAllAsync();
+    LiveData<List<Note>> getAllExistingAsync();
 
 }

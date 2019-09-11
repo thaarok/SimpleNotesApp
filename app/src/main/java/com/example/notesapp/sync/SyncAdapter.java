@@ -59,11 +59,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         for (Note note : database.getNoteDao().getChangedLocally()) {
 
             RequestFuture<JSONObject> future = RequestFuture.newFuture();
-            JsonRequest request = new JsonObjectRequest(Request.Method.PUT, SERVER + "notes.php", note.toJson(), future, future);
+            JsonRequest request = new JsonObjectRequest(Request.Method.PUT, SERVER + "notes.php", note.toServerJson(), future, future);
             queue.add(request);
             JSONObject response = future.get();
 
-            note.setExternalId(response.getLong("id"));
+            note.setExternalId(response.getLong("id")); // store generated id
+            note.setChangedLocally(false);
             database.getNoteDao().update(note);
             System.out.println("SYNC REMOTE UPDATE");
 
@@ -84,7 +85,8 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void syncFromServerToClient() throws Exception {
         Date lastKnownExternalChanged = database.getNoteDao().getMaximalExternalChanged();
-        String changedFilterParam = lastKnownExternalChanged != null ? "?changedFrom=" + URLEncoder.encode(Database.formatter.format(lastKnownExternalChanged), "UTF-8") : "";
+        String changedFilterParam = lastKnownExternalChanged == null ? "" :
+                "?after=" + URLEncoder.encode(Database.formatter.format(lastKnownExternalChanged), "UTF-8");
         RequestQueue queue = Volley.newRequestQueue(getContext());
 
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
@@ -96,24 +98,26 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
         for (int i = 0; i < response.length(); i++) {
             JSONObject json = response.getJSONObject(i);
             int externalId = json.getInt("id");
-            Date externalChanged = Database.formatter.parse(json.getString("changed"));
             boolean deleted = json.getBoolean("deleted");
-            String name = json.getString("name");
-            String text = json.getString("text");
 
             Note note = database.getNoteDao().getByExternalId(externalId);
-            if (deleted && note != null) {
-                database.getNoteDao().delete(note);
-                System.out.println("SYNC LOCAL DELETE");
-            } else if (note == null) {
-                note = new Note(externalId, externalChanged, name, text);
-                database.getNoteDao().insert(note);
-                System.out.println("SYNC LOCAL INSERT");
+            if (deleted) {
+                if (note != null) {
+                    database.getNoteDao().delete(note);
+                    System.out.println("SYNC LOCAL DELETE");
+                }
             } else {
-                note.setName(name);
-                note.setText(text);
-                database.getNoteDao().update(note);
-                System.out.println("SYNC LOCAL UPDATE");
+                if (note == null) {
+                    note = new Note(externalId);
+                    note.parseServerJson(json);
+                    database.getNoteDao().insert(note);
+                    System.out.println("SYNC LOCAL INSERT");
+                } else {
+                    note.parseServerJson(json);
+                    note.setChangedLocally(false);
+                    database.getNoteDao().update(note);
+                    System.out.println("SYNC LOCAL UPDATE");
+                }
             }
         }
     }

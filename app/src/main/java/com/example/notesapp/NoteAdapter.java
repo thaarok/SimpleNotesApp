@@ -8,30 +8,22 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.notesapp.db.Note;
 
-import java.util.Collections;
 import java.util.List;
 
 import static com.example.notesapp.EditActivity.EXTRA_MESSAGE_ID;
 
-public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> implements Observer<List<Note>> {
+public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
 
-    private List<Note> notes = Collections.emptyList();
+    private List<Note> notes;
     private Context context;
 
-    public NoteAdapter(Context context) {
+    public NoteAdapter(Context context, List<Note> notes) {
         this.context = context;
-    }
-
-    @Override
-    public void onChanged(List<Note> notes) {
-        System.out.println("ON CHANGE");
         this.notes = notes;
-        notifyDataSetChanged();
     }
 
     @NonNull

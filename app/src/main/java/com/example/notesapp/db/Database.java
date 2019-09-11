@@ -20,6 +20,8 @@ public abstract class Database extends RoomDatabase {
 
     public static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 
+    private static Database instance = null;
+
     public abstract NoteDao getNoteDao();
 
     private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
@@ -30,9 +32,12 @@ public abstract class Database extends RoomDatabase {
     };
 
     public static Database getInstance(Context context) {
-        return Room.databaseBuilder(context, Database.class, "DB_NOTES")
-                .addMigrations(MIGRATION_1_2)
-                .build();
+        if (instance == null) {
+            instance = Room.databaseBuilder(context.getApplicationContext(), Database.class, "DB_NOTES")
+                    .addMigrations(MIGRATION_1_2)
+                    .build();
+        }
+        return instance;
     }
 
     @TypeConverter

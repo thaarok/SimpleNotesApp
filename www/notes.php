@@ -18,11 +18,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         
         file_put_contents("log.txt", "inserting...\n", FILE_APPEND | LOCK_EX);
         
-        $sql = $pdo->prepare("INSERT INTO notes (name, text, changed) VALUES (?,?,?)");
+        $sql = $pdo->prepare("INSERT INTO notes (name, text, changed, deleted) VALUES (?, ?, NOW(), 0)");
         $sql->execute(array(
             $data->name,
-            $data->text,
-            $data->changed
+            $data->text
         )) or error($sql->errorInfo());
         
         logg("inserted");
@@ -35,16 +34,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         
         logg("updating...");
         
-        $sql = $pdo->prepare("UPDATE notes SET name = ?, text = ?, changed = ? WHERE id = ? AND changed <= ?");
+        $sql = $pdo->prepare("UPDATE notes SET name = ?, text = ?, changed = NOW(), deleted = 0 WHERE id = ?");
         $sql->execute(array(
             $data->name,
             $data->text,
-            $data->changed,
-            $data->id,
-            $data->changed
+            $data->id
         )) or error($sql->errorInfo());
+        $affected = $sql->rowCount();
         
-        logg("updated");
+        logg("updated ($affected)");
         
         echo json_encode(array(
             "id" => $data->id
@@ -62,15 +60,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     logg("deleted");
     
 } else {
-    $sql = $pdo->prepare("SELECT * FROM notes WHERE changed >= ?");
-    $sql->execute(array(
-        $_GET["changedFrom"]
-    )) or error($sql->errorInfo());
+    logg("GETing...");
+    if (!empty($_GET["after"])) {
+        $sql = $pdo->prepare("SELECT * FROM notes WHERE changed >= ?");
+        $sql->execute(array($_GET["after"])) or error($sql->errorInfo());
+    } else {
+        $sql = $pdo->prepare("SELECT * FROM notes WHERE deleted = 0");
+        $sql->execute(array()) or error($sql->errorInfo());
+    }
     $data = $sql->fetchAll(PDO::FETCH_ASSOC);
     foreach($data as &$row) {
         $row["deleted"] = (bool) $row["deleted"];
     }
-    logg("GET ".$_GET["changedFrom"]." ".json_encode($data));
+    logg("GET ".(empty($_GET["after"]) ? "init" : $_GET["after"])." ".json_encode($data));
     
     header("Content-Type: application/json");
     echo json_encode($data);

@@ -2,6 +2,7 @@ package com.example.notesapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,7 +32,7 @@ public class EditActivity extends AppCompatActivity {
         long id = intent.getLongExtra(EXTRA_MESSAGE_ID, 0);
         if (id == 0) throw new IllegalArgumentException();
 
-        repository = new NoteViewModel(getApplication());
+        repository = ViewModelProviders.of(this).get(NoteViewModel.class);
 
         editName = findViewById(R.id.editName);
         editText = findViewById(R.id.editText);
