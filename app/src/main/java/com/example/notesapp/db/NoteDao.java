@@ -11,33 +11,33 @@ import java.util.Date;
 import java.util.List;
 
 @Dao
-public interface NoteDao {
+public abstract class NoteDao {
 
     @Insert
-    long insert(Note note);
+    public abstract long insert(Note note);
 
     @Update
-    void update(Note note);
+    public abstract void update(Note note);
 
     @Delete
-    void delete(Note note);
+    public abstract void delete(Note note);
 
     @Query("SELECT MAX(externalChanged) FROM Note")
-    Date getMaximalExternalChanged();
+    public abstract Date getMaximalExternalChanged();
 
     @Query("SELECT * FROM Note WHERE externalId = :externalId")
-    Note getByExternalId(long externalId);
+    public abstract Note getByExternalId(long externalId);
 
     @Query("SELECT * FROM Note WHERE changedLocally != 0")
-    List<Note> getChangedLocally();
+    public abstract List<Note> getChangedLocally();
 
     @Query("SELECT * FROM Note WHERE deletedLocally != 0")
-    List<Note> getDeletedLocally();
+    public abstract List<Note> getDeletedLocally();
 
     @Query("SELECT * FROM Note WHERE id = :id AND deletedLocally = 0")
-    LiveData<Note> getByIdAsync(long id);
+    public abstract LiveData<Note> getByIdAsync(long id);
 
     @Query("SELECT * FROM Note WHERE deletedLocally = 0 ORDER BY externalChanged DESC")
-    LiveData<List<Note>> getNotesAsync();
+    public abstract LiveData<List<Note>> getNotesAsync();
 
 }

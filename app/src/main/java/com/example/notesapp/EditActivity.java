@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
 import com.example.notesapp.db.Database;
@@ -29,24 +30,28 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
 
         database = Database.getInstance(getApplicationContext());
-
-        Intent intent = getIntent();
-        long id = intent.getLongExtra(EXTRA_MESSAGE_ID, 0);
-        if (id == 0) throw new IllegalArgumentException();
-
         editName = findViewById(R.id.editName);
         editText = findViewById(R.id.editText);
         removeButton = findViewById(R.id.removeButton);
 
-        database.getNoteDao().getByIdAsync(id).observe(this, new Observer<Note>() {
-            @Override
-            public void onChanged(Note note) {
-                openedNote = note;
-                if (openedNote == null) return;
-                editName.setText(openedNote.getName());
-                editText.setText(openedNote.getText());
-            }
-        });
+        Intent intent = getIntent();
+        final long id = intent.getLongExtra(EXTRA_MESSAGE_ID, 0);
+
+        if (id == 0) {
+            openedNote = new Note("new", "new text");
+        } else {
+            final LiveData<Note> liveNote = database.getNoteDao().getByIdAsync(id);
+            liveNote.observe(this, new Observer<Note>() {
+                @Override
+                public void onChanged(Note note) {
+                    liveNote.removeObserver(this);
+                    openedNote = note;
+                    if (openedNote == null) throw new IllegalStateException("bad id "+id);
+                    editName.setText(openedNote.getName());
+                    editText.setText(openedNote.getText());
+                }
+            });
+        }
 
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,8 +71,13 @@ public class EditActivity extends AppCompatActivity {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                database.getNoteDao().update(openedNote);
-                System.out.println("UPDATED");
+                if (openedNote.getId() == 0) {
+                    if ( ! openedNote.isDeletedLocally()) {
+                        database.getNoteDao().insert(openedNote);
+                    }
+                } else {
+                    database.getNoteDao().update(openedNote);
+                }
                 return null;
             }
         }.execute();

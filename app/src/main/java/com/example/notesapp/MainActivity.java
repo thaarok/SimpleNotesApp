@@ -4,7 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,27 +37,19 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         database = Database.getInstance(getApplicationContext());
+        final Context context = this;
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                final Note note = new Note("new", "new text");
-                new AsyncTask<Void, Void, Void>() {
-                    @Override
-                    protected Void doInBackground(Void... voids) {
-                        long id = database.getNoteDao().insert(note);
-                        System.out.println("INSERTED " + id);
-                        return null;
-                    }
-                }.execute();
+                Intent intent = new Intent(context, EditActivity.class);
+                context.startActivity(intent);
             }
         });
 
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        final Context context = this;
 
         database.getNoteDao().getNotesAsync().observe(this, new Observer<List<Note>>() {
             @Override
@@ -68,11 +60,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         account = createSyncAccount();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     @Override
