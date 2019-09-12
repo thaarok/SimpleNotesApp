@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,12 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.notesapp.db.Database;
 import com.example.notesapp.db.Note;
-import com.example.notesapp.db.NoteViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    private NoteViewModel repository;
+    private Database database;
     private Account account;
 
     @Override
@@ -36,23 +36,30 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        database = Database.getInstance(getApplicationContext());
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Note note = new Note("new", "new text");
-                repository.insertAsync(note);
+                final Note note = new Note("new", "new text");
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        long id = database.getNoteDao().insert(note);
+                        System.out.println("INSERTED " + id);
+                        return null;
+                    }
+                }.execute();
             }
         });
-
-        repository = ViewModelProviders.of(this).get(NoteViewModel.class);
 
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         final Context context = this;
 
-        repository.getAll().observe(this, new Observer<List<Note>>() {
+        database.getNoteDao().getNotesAsync().observe(this, new Observer<List<Note>>() {
             @Override
             public void onChanged(List<Note> notes) {
                 System.out.println("NOTES OBSERVED");
@@ -87,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_sync) {
             Bundle settingsBundle = new Bundle();
-            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true);
-            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true);
+            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); // ignore disabled sync
+            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); // to the front of queue
             ContentResolver.requestSync(account, "com.example.notesapp.provider", settingsBundle);
             System.out.println("REQUESTED SYNC");
             return true;

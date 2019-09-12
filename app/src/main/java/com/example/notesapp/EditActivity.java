@@ -1,23 +1,23 @@
 package com.example.notesapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+
+import com.example.notesapp.db.Database;
 import com.example.notesapp.db.Note;
-import com.example.notesapp.db.NoteViewModel;
 
 public class EditActivity extends AppCompatActivity {
 
     public static final String EXTRA_MESSAGE_ID = "com.example.notesapp.noteId";
 
-    private NoteViewModel repository;
+    private Database database;
     private Note openedNote;
     private EditText editName;
     private EditText editText;
@@ -28,17 +28,17 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
+        database = Database.getInstance(getApplicationContext());
+
         Intent intent = getIntent();
         long id = intent.getLongExtra(EXTRA_MESSAGE_ID, 0);
         if (id == 0) throw new IllegalArgumentException();
-
-        repository = ViewModelProviders.of(this).get(NoteViewModel.class);
 
         editName = findViewById(R.id.editName);
         editText = findViewById(R.id.editText);
         removeButton = findViewById(R.id.removeButton);
 
-        repository.getById(id).observe(this, new Observer<Note>() {
+        database.getNoteDao().getByIdAsync(id).observe(this, new Observer<Note>() {
             @Override
             public void onChanged(Note note) {
                 openedNote = note;
@@ -47,8 +47,6 @@ public class EditActivity extends AppCompatActivity {
                 editText.setText(openedNote.getText());
             }
         });
-
-
 
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +62,15 @@ public class EditActivity extends AppCompatActivity {
         super.onPause();
         openedNote.setName(editName.getText().toString());
         openedNote.setText(editText.getText().toString());
-        repository.updateAsync(openedNote);
+        openedNote.setChangedLocally(true);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                database.getNoteDao().update(openedNote);
+                System.out.println("UPDATED");
+                return null;
+            }
+        }.execute();
     }
 
 }
