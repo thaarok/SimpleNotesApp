@@ -41,24 +41,18 @@ public class MainActivity extends AppCompatActivity {
         database = Database.getInstance(getApplicationContext());
         final Context context = this;
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, EditActivity.class);
-                context.startActivity(intent);
-            }
+        FloatingActionButton fab = findViewById(R.id.fab); // add button
+        fab.setOnClickListener(view -> {
+            Intent intent = new Intent(context, EditActivity.class);
+            context.startActivity(intent);
         });
 
         recyclerView = findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        database.getNoteDao().getNotesAsync().observe(this, new Observer<List<Note>>() {
-            @Override
-            public void onChanged(List<Note> notes) {
-                System.out.println("NOTES OBSERVED");
-                recyclerView.setAdapter(new NoteAdapter(context, notes));
-            }
+        database.getNoteDao().getNotesAsync().observe(this, notes -> {
+            System.out.println("NOTES OBSERVED");
+            recyclerView.setAdapter(new NoteAdapter(context, notes));
         });
     }
 
@@ -75,11 +69,9 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        if (id == R.id.action_sync) {
+        if (id == R.id.action_add) {
+            Intent intent = new Intent(this, EditActivity.class);
+            this.startActivity(intent);
             return true;
         }
 

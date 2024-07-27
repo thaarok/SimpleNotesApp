@@ -3,15 +3,12 @@ package cz.tharok.notesapp;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-
-import cz.tharok.notesapp.R;
 
 import cz.tharok.notesapp.db.Database;
 import cz.tharok.notesapp.db.Note;
@@ -26,6 +23,8 @@ public class EditActivity extends AppCompatActivity {
     private EditText editText;
     private ImageButton removeButton;
 
+    private ImageButton saveButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,6 +34,7 @@ public class EditActivity extends AppCompatActivity {
         editName = findViewById(R.id.editName);
         editText = findViewById(R.id.editText);
         removeButton = findViewById(R.id.removeButton);
+        saveButton = findViewById(R.id.saveButton);
 
         Intent intent = getIntent();
         final long id = intent.getLongExtra(EXTRA_MESSAGE_ID, 0);
@@ -55,13 +55,12 @@ public class EditActivity extends AppCompatActivity {
             });
         }
 
-        removeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openedNote.setDeletedLocally(true);
-                finish();
-            }
+        removeButton.setOnClickListener(view -> {
+            openedNote.setDeletedLocally(true);
+            finish();
         });
+
+        saveButton.setOnClickListener(view -> finish());
     }
 
     @Override

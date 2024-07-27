@@ -3,13 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cz.tharok.notesapp.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_add"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_sync"
-        android:orderInCategory="100"
-        android:title="@string/action_sync"
+        android:title="@string/action_add"
         app:showAsAction="never" />
 </menu>
