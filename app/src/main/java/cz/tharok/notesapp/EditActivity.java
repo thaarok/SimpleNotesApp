@@ -1,11 +1,13 @@
 package cz.tharok.notesapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -48,7 +50,7 @@ public class EditActivity extends AppCompatActivity {
                 public void onChanged(Note note) {
                     liveNote.removeObserver(this);
                     openedNote = note;
-                    if (openedNote == null) throw new IllegalStateException("bad id "+id);
+                    if (openedNote == null) throw new IllegalStateException("note with id "+id+" not found");
                     editName.setText(openedNote.getName());
                     editText.setText(openedNote.getText());
                 }
@@ -56,8 +58,15 @@ public class EditActivity extends AppCompatActivity {
         }
 
         removeButton.setOnClickListener(view -> {
-            openedNote.setDeletedLocally(true);
-            finish();
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.action_delete)
+                    .setMessage(R.string.action_delete_sure)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                        openedNote.setDeletedLocally(true);
+                        finish();
+                    })
+                    .setNegativeButton(android.R.string.no, null).show();
         });
 
         saveButton.setOnClickListener(view -> finish());
