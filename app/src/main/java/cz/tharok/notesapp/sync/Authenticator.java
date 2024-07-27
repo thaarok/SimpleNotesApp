@@ -1,4 +1,4 @@
-package com.example.notesapp.sync;
+package cz.tharok.notesapp.sync;
 
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;

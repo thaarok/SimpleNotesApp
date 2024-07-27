@@ -1,4 +1,4 @@
-package com.example.notesapp;
+package cz.tharok.notesapp;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -11,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-import com.example.notesapp.db.Database;
-import com.example.notesapp.db.Note;
+import com.example.notesapp.R;
+
+import cz.tharok.notesapp.db.Database;
+import cz.tharok.notesapp.db.Note;
 
 public class EditActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.notesapp.db;
+package cz.tharok.notesapp.db;
 
 import androidx.room.Entity;
 import androidx.room.Ignore;

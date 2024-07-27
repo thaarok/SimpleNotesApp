@@ -1,11 +1,11 @@
-package com.example.notesapp.sync;
+package cz.tharok.notesapp.sync;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
-import com.example.notesapp.db.Database;
+import cz.tharok.notesapp.db.Database;
 
 // https://github.com/googlesamples/android-architecture-components/blob/master/PersistenceContentProviderSample/app/src/main/java/com/example/android/contentprovidersample/provider/SampleContentProvider.java
 

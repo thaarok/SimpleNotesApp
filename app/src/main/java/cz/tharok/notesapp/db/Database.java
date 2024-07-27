@@ -1,4 +1,4 @@
-package com.example.notesapp.db;
+package cz.tharok.notesapp.db;
 
 import android.content.Context;
 

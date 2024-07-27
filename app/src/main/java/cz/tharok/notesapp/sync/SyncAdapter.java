@@ -1,4 +1,4 @@
-package com.example.notesapp.sync;
+package cz.tharok.notesapp.sync;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
@@ -15,8 +15,9 @@ import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.notesapp.db.Database;
-import com.example.notesapp.db.Note;
+
+import cz.tharok.notesapp.db.Database;
+import cz.tharok.notesapp.db.Note;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

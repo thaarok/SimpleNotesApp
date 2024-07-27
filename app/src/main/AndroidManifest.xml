@@ -18,13 +18,12 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".EditActivity"
+            android:name="cz.tharok.notesapp.EditActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
         <activity
-            android:name=".MainActivity"
-            android:label="@string/app_name"
+            android:name="cz.tharok.notesapp.MainActivity"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -34,13 +33,13 @@
         </activity>
 
         <provider
-            android:name="com.example.notesapp.sync.NotesProvider"
-            android:authorities="com.example.notesapp.provider"
+            android:name="cz.tharok.notesapp.sync.NotesProvider"
+            android:authorities="cz.tharok.notesapp.provider"
             android:exported="false"
             android:syncable="true"/>
 
         <service
-            android:name="com.example.notesapp.sync.AuthenticatorService"
+            android:name="cz.tharok.notesapp.sync.AuthenticatorService"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
@@ -51,7 +50,7 @@
         </service>
 
         <service
-            android:name="com.example.notesapp.sync.SyncService"
+            android:name="cz.tharok.notesapp.sync.SyncService"
             android:exported="true"
             android:process=":sync">
             <intent-filter>

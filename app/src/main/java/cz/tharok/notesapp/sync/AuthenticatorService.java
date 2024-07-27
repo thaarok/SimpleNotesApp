@@ -1,4 +1,4 @@
-package com.example.notesapp.sync;
+package cz.tharok.notesapp.sync;
 
 import android.app.Service;
 import android.content.Intent;

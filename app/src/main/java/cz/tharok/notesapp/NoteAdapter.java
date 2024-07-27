@@ -1,4 +1,4 @@
-package com.example.notesapp;
+package cz.tharok.notesapp;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,11 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notesapp.db.Note;
+import com.example.notesapp.R;
+
+import cz.tharok.notesapp.db.Note;
 
 import java.util.List;
-
-import static com.example.notesapp.EditActivity.EXTRA_MESSAGE_ID;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
 
@@ -58,7 +58,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteHolder> {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, EditActivity.class);
-                    intent.putExtra(EXTRA_MESSAGE_ID, note.getId());
+                    intent.putExtra(EditActivity.EXTRA_MESSAGE_ID, note.getId());
                     context.startActivity(intent);
                 }
             });

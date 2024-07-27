@@ -1,4 +1,4 @@
-package com.example.notesapp;
+package cz.tharok.notesapp;
 
 import org.junit.Test;
 

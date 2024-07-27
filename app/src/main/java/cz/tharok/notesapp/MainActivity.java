@@ -1,4 +1,4 @@
-package com.example.notesapp;
+package cz.tharok.notesapp;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -17,8 +17,11 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notesapp.db.Database;
-import com.example.notesapp.db.Note;
+import com.example.notesapp.R;
+
+import cz.tharok.notesapp.db.Database;
+import cz.tharok.notesapp.db.Note;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
