@@ -17,7 +17,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notesapp.R;
+import cz.tharok.notesapp.R;
 
 import cz.tharok.notesapp.db.Database;
 import cz.tharok.notesapp.db.Note;
@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private Database database;
-    private Account account;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
                 recyclerView.setAdapter(new NoteAdapter(context, notes));
             }
         });
-
-        account = createSyncAccount();
     }
 
     @Override
@@ -83,32 +80,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_sync) {
-            Bundle settingsBundle = new Bundle();
-            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_MANUAL, true); // ignore disabled sync
-            settingsBundle.putBoolean(ContentResolver.SYNC_EXTRAS_EXPEDITED, true); // to the front of queue
-            ContentResolver.requestSync(account, "com.example.notesapp.provider", settingsBundle);
-            System.out.println("REQUESTED SYNC");
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    private Account createSyncAccount() {
-        String ACCOUNT_TYPE = "com.example.notesapp.account";
-        AccountManager accountManager = (AccountManager) getSystemService(ACCOUNT_SERVICE);
-
-        Account[] existing = accountManager.getAccountsByType(ACCOUNT_TYPE);
-        if (existing.length > 0) {
-            return existing[0];
-        }
-
-        Account account = new Account("dummyaccount", ACCOUNT_TYPE);
-        if (accountManager.addAccountExplicitly(account, null, null)) {
-            ContentResolver.setIsSyncable(account, "com.example.notesapp.content", 1);
-            ContentResolver.setSyncAutomatically(account, "com.example.notesapp.content", true);
-        }
-        return account;
     }
 
 }

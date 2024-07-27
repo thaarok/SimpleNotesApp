@@ -10,8 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.notesapp.R;
-
 import cz.tharok.notesapp.db.Note;
 
 import java.util.List;

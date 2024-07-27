@@ -11,14 +11,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-import com.example.notesapp.R;
+import cz.tharok.notesapp.R;
 
 import cz.tharok.notesapp.db.Database;
 import cz.tharok.notesapp.db.Note;
 
 public class EditActivity extends AppCompatActivity {
 
-    public static final String EXTRA_MESSAGE_ID = "com.example.notesapp.noteId";
+    public static final String EXTRA_MESSAGE_ID = "cz.tharok.notesapp.noteId";
 
     private Database database;
     private Note openedNote;
